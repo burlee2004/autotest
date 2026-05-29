@@ -1,0 +1,7 @@
+environment: dev
+browser: chrome
+headless: true
+timeout: 10
+report_path: reports
+screenshot_path: screenshots
+api_url: "http://host.docker.internal:5000/api"

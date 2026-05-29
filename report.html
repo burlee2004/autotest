@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title id="head-title">report.html</title>
+      <style type="text/css">body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  /* do not increase min-width as some may use split screens */
+  min-width: 800px;
+  color: #999;
+}
+
+h1 {
+  font-size: 24px;
+  color: black;
+}
+
+h2 {
+  font-size: 16px;
+  color: black;
+}
+
+p {
+  color: black;
+}
+
+a {
+  color: #999;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+/******************************
+ * SUMMARY INFORMATION
+ ******************************/
+#environment td {
+  padding: 5px;
+  border: 1px solid #e6e6e6;
+  vertical-align: top;
+}
+#environment tr:nth-child(odd) {
+  background-color: #f6f6f6;
+}
+#environment ul {
+  margin: 0;
+  padding: 0 20px;
+}
+
+/******************************
+ * TEST RESULT COLORS
+ ******************************/
+span.passed,
+.passed .col-result {
+  color: green;
+}
+
+span.skipped,
+span.xfailed,
+span.rerun,
+.skipped .col-result,
+.xfailed .col-result,
+.rerun .col-result {
+  color: orange;
+}
+
+span.error,
+span.failed,
+span.xpassed,
+.error .col-result,
+.failed .col-result,
+.xpassed .col-result {
+  color: red;
+}
+
+.col-links__extra {
+  margin-right: 3px;
+}
+
+/******************************
+ * RESULTS TABLE
+ *
+ * 1. Table Layout
+ * 2. Extra
+ * 3. Sorting items
+ *
+ ******************************/
+/*------------------
+ * 1. Table Layout
+ *------------------*/
+#results-table {
+  border: 1px solid #e6e6e6;
+  color: #999;
+  font-size: 12px;
+  width: 100%;
+}
+#results-table th,
+#results-table td {
+  padding: 5px;
+  border: 1px solid #e6e6e6;
+  text-align: left;
+}
+#results-table th {
+  font-weight: bold;
+}
+
+/*------------------
+ * 2. Extra
+ *------------------*/
+.logwrapper {
+  max-height: 230px;
+  overflow-y: scroll;
+  background-color: #e6e6e6;
+}
+.logwrapper.expanded {
+  max-height: none;
+}
+.logwrapper.expanded .logexpander:after {
+  content: "collapse [-]";
+}
+.logwrapper .logexpander {
+  z-index: 1;
+  position: sticky;
+  top: 10px;
+  width: max-content;
+  border: 1px solid;
+  border-radius: 3px;
+  padding: 5px 7px;
+  margin: 10px 0 10px calc(100% - 80px);
+  cursor: pointer;
+  background-color: #e6e6e6;
+}
+.logwrapper .logexpander:after {
+  content: "expand [+]";
+}
+.logwrapper .logexpander:hover {
+  color: #000;
+  border-color: #000;
+}
+.logwrapper .log {
+  min-height: 40px;
+  position: relative;
+  top: -50px;
+  height: calc(100% + 50px);
+  border: 1px solid #e6e6e6;
+  color: black;
+  display: block;
+  font-family: "Courier New", Courier, monospace;
+  padding: 5px;
+  padding-right: 80px;
+  white-space: pre-wrap;
+}
+
+div.media {
+  border: 1px solid #e6e6e6;
+  float: right;
+  height: 240px;
+  margin: 0 5px;
+  overflow: hidden;
+  width: 320px;
+}
+
+.media-container {
+  display: grid;
+  grid-template-columns: 25px auto 25px;
+  align-items: center;
+  flex: 1 1;
+  overflow: hidden;
+  height: 200px;
+}
+
+.media-container--fullscreen {
+  grid-template-columns: 0px auto 0px;
+}
+
+.media-container__nav--right,
+.media-container__nav--left {
+  text-align: center;
+  cursor: pointer;
+}
+
+.media-container__viewport {
+  cursor: pointer;
+  text-align: center;
+  height: inherit;
+}
+.media-container__viewport img,
+.media-container__viewport video {
+  object-fit: cover;
+  width: 100%;
+  max-height: 100%;
+}
+
+.media__name,
+.media__counter {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex: 0 0 25px;
+  align-items: center;
+}
+
+.collapsible td:not(.col-links) {
+  cursor: pointer;
+}
+.collapsible td:not(.col-links):hover::after {
+  color: #bbb;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.col-result {
+  width: 130px;
+}
+.col-result:hover::after {
+  content: " (hide details)";
+}
+
+.col-result.collapsed:hover::after {
+  content: " (show details)";
+}
+
+#environment-header h2:hover::after {
+  content: " (hide details)";
+  color: #bbb;
+  font-style: italic;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+#environment-header.collapsed h2:hover::after {
+  content: " (show details)";
+  color: #bbb;
+  font-style: italic;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/*------------------
+ * 3. Sorting items
+ *------------------*/
+.sortable {
+  cursor: pointer;
+}
+.sortable.desc:after {
+  content: " ";
+  position: relative;
+  left: 5px;
+  bottom: -12.5px;
+  border: 10px solid #4caf50;
+  border-bottom: 0;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+.sortable.asc:after {
+  content: " ";
+  position: relative;
+  left: 5px;
+  bottom: 12.5px;
+  border: 10px solid #4caf50;
+  border-top: 0;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+
+.hidden, .summary__reload__button.hidden {
+  display: none;
+}
+
+.summary__data {
+  flex: 0 0 550px;
+}
+.summary__reload {
+  flex: 1 1;
+  display: flex;
+  justify-content: center;
+}
+.summary__reload__button {
+  flex: 0 0 300px;
+  display: flex;
+  color: white;
+  font-weight: bold;
+  background-color: #4caf50;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.summary__reload__button:hover {
+  background-color: #46a049;
+}
+.summary__spacer {
+  flex: 0 0 550px;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+}
+
+.filters,
+.collapse {
+  display: flex;
+  align-items: center;
+}
+.filters button,
+.collapse button {
+  color: #999;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.filters button:hover,
+.collapse button:hover {
+  color: #ccc;
+}
+
+.filter__label {
+  margin-right: 10px;
+}
+
+      </style>
+    
+  </head>
+  <body>
+    <h1 id="title">report.html</h1>
+    <p>Report generated on 29-Mar-2026 at 13:27:51 by <a href="https://pypi.python.org/pypi/pytest-html">pytest-html</a>
+        v4.2.0</p>
+    <div id="environment-header">
+      <h2>Environment</h2>
+    </div>
+    <table id="environment"></table>
+    <!-- TEMPLATES -->
+      <template id="template_environment_row">
+      <tr>
+        <td></td>
+        <td></td>
+      </tr>
+    </template>
+    <template id="template_results-table__body--empty">
+      <tbody class="results-table-row">
+        <tr id="not-found-message">
+          <td colspan="4">No results found. Check the filters.</td>
+        </tr>
+      </tbody>
+    </template>
+    <template id="template_results-table__tbody">
+      <tbody class="results-table-row">
+        <tr class="collapsible">
+        </tr>
+        <tr class="extras-row">
+          <td class="extra" colspan="4">
+            <div class="extraHTML"></div>
+            <div class="media">
+              <div class="media-container">
+                  <div class="media-container__nav--left">&lt;</div>
+                  <div class="media-container__viewport">
+                    <img src="" />
+                    <video controls>
+                      <source src="" type="video/mp4">
+                    </video>
+                  </div>
+                  <div class="media-container__nav--right">&gt;</div>
+                </div>
+                <div class="media__name"></div>
+                <div class="media__counter"></div>
+            </div>
+            <div class="logwrapper">
+              <div class="logexpander"></div>
+              <div class="log"></div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </template>
+    <!-- END TEMPLATES -->
+    <div class="summary">
+      <div class="summary__data">
+        <h2>Summary</h2>
+        <div class="additional-summary prefix">
+        </div>
+        <p class="run-count">11 tests took 00:00:11.</p>
+        <p class="filter">(Un)check the boxes to filter the results.</p>
+        <div class="summary__reload">
+          <div class="summary__reload__button hidden" onclick="location.reload()">
+            <div>There are still tests running. <br />Reload this page to get the latest results!</div>
+          </div>
+        </div>
+        <div class="summary__spacer"></div>
+        <div class="controls">
+          <div class="filters">
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="failed" disabled>
+            <span class="failed">0 Failed,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="passed" >
+            <span class="passed">11 Passed,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="skipped" disabled>
+            <span class="skipped">0 Skipped,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="xfailed" disabled>
+            <span class="xfailed">0 Expected failures,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="xpassed" disabled>
+            <span class="xpassed">0 Unexpected passes,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="error" disabled>
+            <span class="error">0 Errors,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="rerun" disabled>
+            <span class="rerun">0 Reruns</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="retried" disabled>
+            <span class="retried">0 Retried,</span>
+          </div>
+          <div class="collapse">
+            <button id="show_all_details">Show all details</button>&nbsp;/&nbsp;<button id="hide_all_details">Hide all details</button>
+          </div>
+        </div>
+      </div>
+      <div class="additional-summary summary">
+      </div>
+      <div class="additional-summary postfix">
+      </div>
+    </div>
+    <table id="results-table">
+      <thead id="results-table-head">
+        <tr>
+          <th class="sortable" data-column-type="result">Result</th>
+          <th class="sortable" data-column-type="testId">Test</th>
+          <th class="sortable" data-column-type="duration">Duration</th>
+          <th>Links</th>
+        </tr>
+      </thead>
+    </table>
+  <footer>
+    <div id="data-container" data-jsonblob="{&#34;environment&#34;: {&#34;Python&#34;: &#34;3.11.0rc2&#34;, &#34;Platform&#34;: &#34;Windows-10-10.0.22631-SP0&#34;, &#34;Packages&#34;: {&#34;pytest&#34;: &#34;9.0.2&#34;, &#34;pluggy&#34;: &#34;1.6.0&#34;}, &#34;Plugins&#34;: {&#34;html&#34;: &#34;4.2.0&#34;, &#34;metadata&#34;: &#34;3.1.1&#34;}}, &#34;tests&#34;: {&#34;tests/api/test_api_client.py::test_api_client_get&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_api_client.py::test_api_client_get&#34;, &#34;duration&#34;: &#34;2 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_api_client.py::test_api_client_get&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;2 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST START] tests/api/test_api_client.py::test_api_client_get\n\n----------------------------- Captured stdout call -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST] GET https://fake-api.com/users\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST HEADERS] {&amp;#x27;Content-Type&amp;#x27;: &amp;#x27;application/json&amp;#x27;}\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE] status_code=200\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE BODY] {&amp;quot;message&amp;quot;: &amp;quot;success&amp;quot;}\n&#34;}], &#34;tests/api/test_api_client.py::test_api_client_post&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_api_client.py::test_api_client_post&#34;, &#34;duration&#34;: &#34;2 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_api_client.py::test_api_client_post&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;2 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST END] tests/api/test_api_client.py::test_api_client_get\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST START] tests/api/test_api_client.py::test_api_client_post\n\n----------------------------- Captured stdout call -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST] POST https://fake-api.com/auth/login\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST HEADERS] {&amp;#x27;Content-Type&amp;#x27;: &amp;#x27;application/json&amp;#x27;}\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST JSON] {&amp;#x27;username&amp;#x27;: &amp;#x27;admin&amp;#x27;, &amp;#x27;password&amp;#x27;: &amp;#x27;123456&amp;#x27;}\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE] status_code=200\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE BODY] {&amp;quot;message&amp;quot;: &amp;quot;success&amp;quot;}\n&#34;}], &#34;tests/api/test_auth_api.py::test_auth_login&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_auth_api.py::test_auth_login&#34;, &#34;duration&#34;: &#34;1 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_auth_api.py::test_auth_login&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;1 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST END] tests/api/test_api_client.py::test_api_client_post\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST START] tests/api/test_auth_api.py::test_auth_login\n&#34;}], &#34;tests/api/test_user_advanced.py::test_get_users_schema&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_user_advanced.py::test_get_users_schema&#34;, &#34;duration&#34;: &#34;14 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_user_advanced.py::test_get_users_schema&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;14 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST END] tests/api/test_auth_api.py::test_auth_login\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST START] tests/api/test_user_advanced.py::test_get_users_schema\n\n----------------------------- Captured stdout call -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST] GET http://127.0.0.1:5000/api/users\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST HEADERS] {&amp;#x27;Content-Type&amp;#x27;: &amp;#x27;application/json&amp;#x27;}\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE] status_code=200\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE BODY] [{&amp;quot;id&amp;quot;:1,&amp;quot;name&amp;quot;:&amp;quot;Tam&amp;quot;},{&amp;quot;id&amp;quot;:2,&amp;quot;name&amp;quot;:&amp;quot;Tam&amp;quot;},{&amp;quot;id&amp;quot;:3,&amp;quot;name&amp;quot;:&amp;quot;Test&amp;quot;}]\n\n&#34;}], &#34;tests/api/test_user_advanced.py::test_create_user&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_user_advanced.py::test_create_user&#34;, &#34;duration&#34;: &#34;6 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_user_advanced.py::test_create_user&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;6 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST END] tests/api/test_user_advanced.py::test_get_users_schema\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST START] tests/api/test_user_advanced.py::test_create_user\n\n----------------------------- Captured stdout call -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST] POST http://127.0.0.1:5000/api/users\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST HEADERS] {&amp;#x27;Content-Type&amp;#x27;: &amp;#x27;application/json&amp;#x27;}\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST JSON] {&amp;#x27;name&amp;#x27;: &amp;#x27;Tam&amp;#x27;, &amp;#x27;job&amp;#x27;: &amp;#x27;Tester&amp;#x27;}\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE] status_code=201\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE BODY] {&amp;quot;id&amp;quot;:4,&amp;quot;name&amp;quot;:&amp;quot;Tam&amp;quot;}\n\n&#34;}], &#34;tests/api/test_user_advanced.py::test_user_flow&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_user_advanced.py::test_user_flow&#34;, &#34;duration&#34;: &#34;33 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_user_advanced.py::test_user_flow&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;33 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST END] tests/api/test_user_advanced.py::test_create_user\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST START] tests/api/test_user_advanced.py::test_user_flow\n\n----------------------------- Captured stdout call -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST] POST http://127.0.0.1:5000/api/users\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST HEADERS] {&amp;#x27;Content-Type&amp;#x27;: &amp;#x27;application/json&amp;#x27;}\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST JSON] {&amp;#x27;name&amp;#x27;: &amp;#x27;Test&amp;#x27;, &amp;#x27;job&amp;#x27;: &amp;#x27;QA&amp;#x27;}\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE] status_code=201\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE BODY] {&amp;quot;id&amp;quot;:5,&amp;quot;name&amp;quot;:&amp;quot;Test&amp;quot;}\n\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST] GET http://127.0.0.1:5000/api/users\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST HEADERS] {&amp;#x27;Content-Type&amp;#x27;: &amp;#x27;application/json&amp;#x27;}\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE] status_code=200\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE BODY] [{&amp;quot;id&amp;quot;:1,&amp;quot;name&amp;quot;:&amp;quot;Tam&amp;quot;},{&amp;quot;id&amp;quot;:2,&amp;quot;name&amp;quot;:&amp;quot;Tam&amp;quot;},{&amp;quot;id&amp;quot;:3,&amp;quot;name&amp;quot;:&amp;quot;Test&amp;quot;},{&amp;quot;id&amp;quot;:4,&amp;quot;name&amp;quot;:&amp;quot;Tam&amp;quot;},{&amp;quot;id&amp;quot;:5,&amp;quot;name&amp;quot;:&amp;quot;Test&amp;quot;}]\n\n&#34;}], &#34;tests/api/test_user_api.py::test_get_users&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_user_api.py::test_get_users&#34;, &#34;duration&#34;: &#34;25 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_user_api.py::test_get_users&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;25 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST END] tests/api/test_user_advanced.py::test_user_flow\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST START] tests/api/test_user_api.py::test_get_users\n\n----------------------------- Captured stdout call -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST] GET http://127.0.0.1:5000/api/users\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST HEADERS] {&amp;#x27;Content-Type&amp;#x27;: &amp;#x27;application/json&amp;#x27;}\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE] status_code=200\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE BODY] [{&amp;quot;id&amp;quot;:1,&amp;quot;name&amp;quot;:&amp;quot;Tam&amp;quot;},{&amp;quot;id&amp;quot;:2,&amp;quot;name&amp;quot;:&amp;quot;Tam&amp;quot;},{&amp;quot;id&amp;quot;:3,&amp;quot;name&amp;quot;:&amp;quot;Test&amp;quot;},{&amp;quot;id&amp;quot;:4,&amp;quot;name&amp;quot;:&amp;quot;Tam&amp;quot;},{&amp;quot;id&amp;quot;:5,&amp;quot;name&amp;quot;:&amp;quot;Test&amp;quot;}]\n\n&#34;}], &#34;tests/api/test_user_api_real.py::test_get_users_real&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_user_api_real.py::test_get_users_real&#34;, &#34;duration&#34;: &#34;150 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_user_api_real.py::test_get_users_real&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;150 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST END] tests/api/test_user_api.py::test_get_users\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST START] tests/api/test_user_api_real.py::test_get_users_real\n\n----------------------------- Captured stdout call -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST] GET https://jsonplaceholder.typicode.com/users\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API REQUEST HEADERS] {&amp;#x27;Content-Type&amp;#x27;: &amp;#x27;application/json&amp;#x27;}\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE] status_code=200\n2026-03-29 13:27:40 | INFO  | automation_framework.api_client | [API RESPONSE BODY] [\n  {\n    &amp;quot;id&amp;quot;: 1,\n    &amp;quot;name&amp;quot;: &amp;quot;Leanne Graham&amp;quot;,\n    &amp;quot;username&amp;quot;: &amp;quot;Bret&amp;quot;,\n    &amp;quot;email&amp;quot;: &amp;quot;Sincere@april.biz&amp;quot;,\n    &amp;quot;address&amp;quot;: {\n      &amp;quot;street&amp;quot;: &amp;quot;Kulas Light&amp;quot;,\n      &amp;quot;suite&amp;quot;: &amp;quot;Apt. 556&amp;quot;,\n      &amp;quot;city&amp;quot;: &amp;quot;Gwenborough&amp;quot;,\n      &amp;quot;zipcode&amp;quot;: &amp;quot;92998-3874&amp;quot;,\n      &amp;quot;geo&amp;quot;: {\n        &amp;quot;lat&amp;quot;: &amp;quot;-37.3159&amp;quot;,\n        &amp;quot;lng&amp;quot;: &amp;quot;81.1496&amp;quot;\n      }\n    },\n    &amp;quot;phone&amp;quot;: &amp;quot;1-770-736-8031 x56442&amp;quot;,\n    &amp;quot;website&amp;quot;: &amp;quot;hildegard.org&amp;quot;,\n    &amp;quot;company&amp;quot;: {\n      &amp;quot;name&amp;quot;: &amp;quot;Romaguera-Crona&amp;quot;,\n      &amp;quot;catchPhrase&amp;quot;: &amp;quot;Multi-layered client-server neural-net&amp;quot;,\n      &amp;quot;bs&amp;quot;: &amp;quot;harness real-time e-markets&amp;quot;\n    }\n  },\n  {\n    &amp;quot;id&amp;quot;: 2,\n    &amp;quot;name&amp;quot;: &amp;quot;Ervin Howell&amp;quot;,\n    &amp;quot;username&amp;quot;: &amp;quot;Antonette&amp;quot;,\n    &amp;quot;email&amp;quot;: &amp;quot;Shanna@melissa.tv&amp;quot;,\n    &amp;quot;address&amp;quot;: {\n      &amp;quot;street&amp;quot;: &amp;quot;Victor Plains&amp;quot;,\n      &amp;quot;suite&amp;quot;: &amp;quot;Suite 879&amp;quot;,\n      &amp;quot;city&amp;quot;: &amp;quot;Wisokyburgh&amp;quot;,\n      &amp;quot;zipcode&amp;quot;: &amp;quot;90566-7771&amp;quot;,\n      &amp;quot;geo&amp;quot;: {\n        &amp;quot;lat&amp;quot;: &amp;quot;-43.9509&amp;quot;,\n        &amp;quot;lng&amp;quot;: &amp;quot;-34.4618&amp;quot;\n      }\n    },\n    &amp;quot;phone&amp;quot;: &amp;quot;010-692-6593 x09125&amp;quot;,\n    &amp;quot;website&amp;quot;: &amp;quot;anastasia.net&amp;quot;,\n    &amp;quot;company&amp;quot;: {\n      &amp;quot;name&amp;quot;: &amp;quot;Deckow-Crist&amp;quot;,\n      &amp;quot;catchPhrase&amp;quot;: &amp;quot;Proactive didactic contingency&amp;quot;,\n      &amp;quot;bs&amp;quot;: &amp;quot;synergize scalable supply-chains&amp;quot;\n    }\n  },\n  {\n    &amp;quot;id&amp;quot;: 3,\n    &amp;quot;name&amp;quot;: &amp;quot;Clementine Bauch&amp;quot;,\n    &amp;quot;username&amp;quot;: &amp;quot;Samantha&amp;quot;,\n    &amp;quot;email&amp;quot;: &amp;quot;Nathan@yesenia.net&amp;quot;,\n    &amp;quot;address&amp;quot;: {\n      &amp;quot;street&amp;quot;: &amp;quot;Douglas Extension&amp;quot;,\n      &amp;quot;suite&amp;quot;: &amp;quot;Suite 847&amp;quot;,\n      &amp;quot;city&amp;quot;: &amp;quot;McKenziehaven&amp;quot;,\n      &amp;quot;zipcode&amp;quot;: &amp;quot;59590-4157&amp;quot;,\n      &amp;quot;geo&amp;quot;: {\n        &amp;quot;lat&amp;quot;: &amp;quot;-68.6102&amp;quot;,\n        &amp;quot;lng&amp;quot;: &amp;quot;-47.0653&amp;quot;\n      }\n    },\n    &amp;quot;phone&amp;quot;: &amp;quot;1-463-123-4447&amp;quot;,\n    &amp;quot;website&amp;quot;: &amp;quot;ramiro.info&amp;quot;,\n    &amp;quot;company&amp;quot;: {\n      &amp;quot;name&amp;quot;: &amp;quot;Romaguera-Jacobson&amp;quot;,\n      &amp;quot;catchPhrase&amp;quot;: &amp;quot;Face to face bifurcated interface&amp;quot;,\n      &amp;quot;bs&amp;quot;: &amp;quot;e-enable strategic applications&amp;quot;\n    }\n  },\n  {\n    &amp;quot;id&amp;quot;: 4,\n    &amp;quot;name&amp;quot;: &amp;quot;Patricia Lebsack&amp;quot;,\n    &amp;quot;username&amp;quot;: &amp;quot;Karianne&amp;quot;,\n    &amp;quot;email&amp;quot;: &amp;quot;Julianne.OConner@kory.org&amp;quot;,\n    &amp;quot;address&amp;quot;: {\n      &amp;quot;street&amp;quot;: &amp;quot;Hoeger Mall&amp;quot;,\n      &amp;quot;suite&amp;quot;: &amp;quot;Apt. 692&amp;quot;,\n      &amp;quot;city&amp;quot;: &amp;quot;South Elvis&amp;quot;,\n      &amp;quot;zipcode&amp;quot;: &amp;quot;53919-4257&amp;quot;,\n      &amp;quot;geo&amp;quot;: {\n        &amp;quot;lat&amp;quot;: &amp;quot;29.4572&amp;quot;,\n        &amp;quot;lng&amp;quot;: &amp;quot;-164.2990&amp;quot;\n      }\n    },\n    &amp;quot;phone&amp;quot;: &amp;quot;493-170-9623 x156&amp;quot;,\n    &amp;quot;website&amp;quot;: &amp;quot;kale.biz&amp;quot;,\n    &amp;quot;company&amp;quot;: {\n      &amp;quot;name&amp;quot;: &amp;quot;Robel-Corkery&amp;quot;,\n      &amp;quot;catchPhrase&amp;quot;: &amp;quot;Multi-tiered zero tolerance productivity&amp;quot;,\n      &amp;quot;bs&amp;quot;: &amp;quot;transition cutting-edge web services&amp;quot;\n    }\n  },\n  {\n    &amp;quot;id&amp;quot;: 5,\n    &amp;quot;name&amp;quot;: &amp;quot;Chelsey Dietrich&amp;quot;,\n    &amp;quot;username&amp;quot;: &amp;quot;Kamren&amp;quot;,\n    &amp;quot;email&amp;quot;: &amp;quot;Lucio_Hettinger@annie.ca&amp;quot;,\n    &amp;quot;address&amp;quot;: {\n      &amp;quot;street&amp;quot;: &amp;quot;Skiles Walks&amp;quot;,\n      &amp;quot;suite&amp;quot;: &amp;quot;Suite 351&amp;quot;,\n      &amp;quot;city&amp;quot;: &amp;quot;Roscoeview&amp;quot;,\n      &amp;quot;zipcode&amp;quot;: &amp;quot;33263&amp;quot;,\n      &amp;quot;geo&amp;quot;: {\n        &amp;quot;lat&amp;quot;: &amp;quot;-31.8129&amp;quot;,\n        &amp;quot;lng&amp;quot;: &amp;quot;62.5342&amp;quot;\n      }\n    },\n    &amp;quot;phone&amp;quot;: &amp;quot;(254)954-1289&amp;quot;,\n    &amp;quot;website&amp;quot;: &amp;quot;demarco.info&amp;quot;,\n    &amp;quot;company&amp;quot;: {\n      &amp;quot;name&amp;quot;: &amp;quot;Keebler LLC&amp;quot;,\n      &amp;quot;catchPhrase&amp;quot;: &amp;quot;User-centric fault-tolerant solution&amp;quot;,\n      &amp;quot;bs&amp;quot;: &amp;quot;revolutionize end-to-end systems&amp;quot;\n    }\n  },\n  {\n    &amp;quot;id&amp;quot;: 6,\n    &amp;quot;name&amp;quot;: &amp;quot;Mrs. Dennis Schulist&amp;quot;,\n    &amp;quot;username&amp;quot;: &amp;quot;Leopoldo_Corkery&amp;quot;,\n    &amp;quot;email&amp;quot;: &amp;quot;Karley_Dach@jasper.info&amp;quot;,\n    &amp;quot;address&amp;quot;: {\n      &amp;quot;street&amp;quot;: &amp;quot;Norberto Crossing&amp;quot;,\n      &amp;quot;suite&amp;quot;: &amp;quot;Apt. 950&amp;quot;,\n      &amp;quot;city&amp;quot;: &amp;quot;South Christy&amp;quot;,\n      &amp;quot;zipcode&amp;quot;: &amp;quot;23505-1337&amp;quot;,\n      &amp;quot;geo&amp;quot;: {\n        &amp;quot;lat&amp;quot;: &amp;quot;-71.4197&amp;quot;,\n        &amp;quot;lng&amp;quot;: &amp;quot;71.7478&amp;quot;\n      }\n    },\n    &amp;quot;phone&amp;quot;: &amp;quot;1-477-935-8478 x6430&amp;quot;,\n    &amp;quot;website&amp;quot;: &amp;quot;ola.org&amp;quot;,\n    &amp;quot;company&amp;quot;: {\n      &amp;quot;name&amp;quot;: &amp;quot;Considine-Lockman&amp;quot;,\n      &amp;quot;catchPhrase&amp;quot;: &amp;quot;Synchronised bottom-line interface&amp;quot;,\n      &amp;quot;bs&amp;quot;: &amp;quot;e-enable innovative applications&amp;quot;\n    }\n  },\n  {\n    &amp;quot;id&amp;quot;: 7,\n    &amp;quot;name&amp;quot;: &amp;quot;Kurtis Weissnat&amp;quot;,\n    &amp;quot;username&amp;quot;: &amp;quot;Elwyn.Skiles&amp;quot;,\n    &amp;quot;email&amp;quot;: &amp;quot;Telly.Hoeger@billy.biz&amp;quot;,\n    &amp;quot;address&amp;quot;: {\n      &amp;quot;street&amp;quot;: &amp;quot;Rex Trail&amp;quot;,\n      &amp;quot;suite&amp;quot;: &amp;quot;Suite 280&amp;quot;,\n      &amp;quot;city&amp;quot;: &amp;quot;Howemouth&amp;quot;,\n      &amp;quot;zipcode&amp;quot;: &amp;quot;58804-1099&amp;quot;,\n      &amp;quot;geo&amp;quot;: {\n        &amp;quot;lat&amp;quot;: &amp;quot;24.8918&amp;quot;,\n        &amp;quot;lng&amp;quot;: &amp;quot;21.8984&amp;quot;\n      }\n    },\n    &amp;quot;phone&amp;quot;: &amp;quot;210.067.6132&amp;quot;,\n    &amp;quot;website&amp;quot;: &amp;quot;elvis.io&amp;quot;,\n    &amp;quot;company&amp;quot;: {\n      &amp;quot;name&amp;quot;: &amp;quot;Johns Group&amp;quot;,\n      &amp;quot;catchPhrase&amp;quot;: &amp;quot;Configurable multimedia task-force&amp;quot;,\n      &amp;quot;bs&amp;quot;: &amp;quot;generate enterprise e-tailers&amp;quot;\n    }\n  },\n  {\n    &amp;quot;id&amp;quot;: 8,\n    &amp;quot;name&amp;quot;: &amp;quot;Nicholas Runolfsdottir V&amp;quot;,\n    &amp;quot;username&amp;quot;: &amp;quot;Maxime_Nienow&amp;quot;,\n    &amp;quot;email&amp;quot;: &amp;quot;Sherwood@rosamond.me&amp;quot;,\n    &amp;quot;address&amp;quot;: {\n      &amp;quot;street&amp;quot;: &amp;quot;Ellsworth Summit&amp;quot;,\n      &amp;quot;suite&amp;quot;: &amp;quot;Suite 729&amp;quot;,\n      &amp;quot;city&amp;quot;: &amp;quot;Aliyaview&amp;quot;,\n      &amp;quot;zipcode&amp;quot;: &amp;quot;45169&amp;quot;,\n      &amp;quot;geo&amp;quot;: {\n        &amp;quot;lat&amp;quot;: &amp;quot;-14.3990&amp;quot;,\n        &amp;quot;lng&amp;quot;: &amp;quot;-120.7677&amp;quot;\n      }\n    },\n    &amp;quot;phone&amp;quot;: &amp;quot;586.493.6943 x140&amp;quot;,\n    &amp;quot;website&amp;quot;: &amp;quot;jacynthe.com&amp;quot;,\n    &amp;quot;company&amp;quot;: {\n      &amp;quot;name&amp;quot;: &amp;quot;Abernathy Group&amp;quot;,\n      &amp;quot;catchPhrase&amp;quot;: &amp;quot;Implemented secondary concept&amp;quot;,\n      &amp;quot;bs&amp;quot;: &amp;quot;e-enable extensible e-tailers&amp;quot;\n    }\n  },\n  {\n    &amp;quot;id&amp;quot;: 9,\n    &amp;quot;name&amp;quot;: &amp;quot;Glenna Reichert&amp;quot;,\n    &amp;quot;username&amp;quot;: &amp;quot;Delphine&amp;quot;,\n    &amp;quot;email&amp;quot;: &amp;quot;Chaim_McDermott@dana.io&amp;quot;,\n    &amp;quot;address&amp;quot;: {\n      &amp;quot;street&amp;quot;: &amp;quot;Dayna Park&amp;quot;,\n      &amp;quot;suite&amp;quot;: &amp;quot;Suite 449&amp;quot;,\n      &amp;quot;city&amp;quot;: &amp;quot;Bartholomebury&amp;quot;,\n      &amp;quot;zipcode&amp;quot;: &amp;quot;76495-3109&amp;quot;,\n      &amp;quot;geo&amp;quot;: {\n        &amp;quot;lat&amp;quot;: &amp;quot;24.6463&amp;quot;,\n        &amp;quot;lng&amp;quot;: &amp;quot;-168.8889&amp;quot;\n      }\n    },\n    &amp;quot;phone&amp;quot;: &amp;quot;(775)976-6794 x41206&amp;quot;,\n    &amp;quot;website&amp;quot;: &amp;quot;conrad.com&amp;quot;,\n    &amp;quot;company&amp;quot;: {\n      &amp;quot;name&amp;quot;: &amp;quot;Yost and Sons&amp;quot;,\n      &amp;quot;catchPhrase&amp;quot;: &amp;quot;Switchable contextually-based project&amp;quot;,\n      &amp;quot;bs&amp;quot;: &amp;quot;aggregate real-time technologies&amp;quot;\n    }\n  },\n  {\n    &amp;quot;id&amp;quot;: 10,\n    &amp;quot;name&amp;quot;: &amp;quot;Clementina DuBuque&amp;quot;,\n    &amp;quot;username&amp;quot;: &amp;quot;Moriah.Stanton&amp;quot;,\n    &amp;quot;email&amp;quot;: &amp;quot;Rey.Padberg@karina.biz&amp;quot;,\n    &amp;quot;address&amp;quot;: {\n      &amp;quot;street&amp;quot;: &amp;quot;Kattie Turnpike&amp;quot;,\n      &amp;quot;suite&amp;quot;: &amp;quot;Suite 198&amp;quot;,\n      &amp;quot;city&amp;quot;: &amp;quot;Lebsackbury&amp;quot;,\n      &amp;quot;zipcode&amp;quot;: &amp;quot;31428-2261&amp;quot;,\n      &amp;quot;geo&amp;quot;: {\n        &amp;quot;lat&amp;quot;: &amp;quot;-38.2386&amp;quot;,\n        &amp;quot;lng&amp;quot;: &amp;quot;57.2232&amp;quot;\n      }\n    },\n    &amp;quot;phone&amp;quot;: &amp;quot;024-648-3804&amp;quot;,\n    &amp;quot;website&amp;quot;: &amp;quot;ambrose.net&amp;quot;,\n    &amp;quot;company&amp;quot;: {\n      &amp;quot;name&amp;quot;: &amp;quot;Hoeger LLC&amp;quot;,\n      &amp;quot;catchPhrase&amp;quot;: &amp;quot;Centralized empowering task-force&amp;quot;,\n      &amp;quot;bs&amp;quot;: &amp;quot;target end-to-end models&amp;quot;\n    }\n  }\n]\n&#34;}], &#34;tests/test_config.py::test_load_config&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/test_config.py::test_load_config&#34;, &#34;duration&#34;: &#34;3 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/test_config.py::test_load_config&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;3 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST END] tests/api/test_user_api_real.py::test_get_users_real\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST START] tests/test_config.py::test_load_config\n&#34;}], &#34;tests/ui/test_login.py::test_login&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/ui/test_login.py::test_login&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/ui/test_login.py::test_login&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST END] tests/test_config.py::test_load_config\n2026-03-29 13:27:40 | INFO  | automation_framework.tests | [TEST START] tests/ui/test_login.py::test_login\n2026-03-29 13:27:40 | INFO  | automation_framework.driver_factory | Start browser: chrome | headless=True\n&#34;}], &#34;tests/ui/test_open_page.py::test_open_google&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/ui/test_open_page.py::test_open_google&#34;, &#34;duration&#34;: &#34;00:00:06&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/ui/test_open_page.py::test_open_google&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:06&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n2026-03-29 13:27:46 | INFO  | automation_framework.tests | [TEST END] tests/ui/test_login.py::test_login\n2026-03-29 13:27:46 | INFO  | automation_framework.tests | [TEST START] tests/ui/test_open_page.py::test_open_google\n2026-03-29 13:27:46 | INFO  | automation_framework.driver_factory | Start browser: chrome | headless=True\n&#34;}]}, &#34;renderCollapsed&#34;: [&#34;passed&#34;], &#34;initialSort&#34;: &#34;result&#34;, &#34;title&#34;: &#34;report.html&#34;}"></div>
+    <script>
+      (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+const { getCollapsedCategory, setCollapsedIds } = require('./storage.js')
+
+class DataManager {
+    setManager(data) {
+        const collapsedCategories = [...getCollapsedCategory(data.renderCollapsed)]
+        const collapsedIds = []
+        const tests = Object.values(data.tests).flat().map((test, index) => {
+            const collapsed = collapsedCategories.includes(test.result.toLowerCase())
+            const id = `test_${index}`
+            if (collapsed) {
+                collapsedIds.push(id)
+            }
+            return {
+                ...test,
+                id,
+                collapsed,
+            }
+        })
+        const dataBlob = { ...data, tests }
+        this.data = { ...dataBlob }
+        this.renderData = { ...dataBlob }
+        setCollapsedIds(collapsedIds)
+    }
+
+    get allData() {
+        return { ...this.data }
+    }
+
+    resetRender() {
+        this.renderData = { ...this.data }
+    }
+
+    setRender(data) {
+        this.renderData.tests = [...data]
+    }
+
+    toggleCollapsedItem(id) {
+        this.renderData.tests = this.renderData.tests.map((test) =>
+            test.id === id ? { ...test, collapsed: !test.collapsed } : test,
+        )
+    }
+
+    set allCollapsed(collapsed) {
+        this.renderData = { ...this.renderData, tests: [...this.renderData.tests.map((test) => (
+            { ...test, collapsed }
+        ))] }
+    }
+
+    get testSubset() {
+        return [...this.renderData.tests]
+    }
+
+    get environment() {
+        return this.renderData.environment
+    }
+
+    get initialSort() {
+        return this.data.initialSort
+    }
+}
+
+module.exports = {
+    manager: new DataManager(),
+}
+
+},{"./storage.js":8}],2:[function(require,module,exports){
+const mediaViewer = require('./mediaviewer.js')
+const templateEnvRow = document.getElementById('template_environment_row')
+const templateResult = document.getElementById('template_results-table__tbody')
+
+function htmlToElements(html) {
+    const temp = document.createElement('template')
+    temp.innerHTML = html
+    return temp.content.childNodes
+}
+
+const find = (selector, elem) => {
+    if (!elem) {
+        elem = document
+    }
+    return elem.querySelector(selector)
+}
+
+const findAll = (selector, elem) => {
+    if (!elem) {
+        elem = document
+    }
+    return [...elem.querySelectorAll(selector)]
+}
+
+const dom = {
+    getStaticRow: (key, value) => {
+        const envRow = templateEnvRow.content.cloneNode(true)
+        const isObj = typeof value === 'object' && value !== null
+        const values = isObj ? Object.keys(value).map((k) => `${k}: ${value[k]}`) : null
+
+        const valuesElement = htmlToElements(
+            values ? `<ul>${values.map((val) => `<li>${val}</li>`).join('')}<ul>` : `<div>${value}</div>`)[0]
+        const td = findAll('td', envRow)
+        td[0].textContent = key
+        td[1].appendChild(valuesElement)
+
+        return envRow
+    },
+    getResultTBody: ({ testId, id, log, extras, resultsTableRow, tableHtml, result, collapsed }) => {
+        const resultBody = templateResult.content.cloneNode(true)
+        resultBody.querySelector('tbody').classList.add(result.toLowerCase())
+        resultBody.querySelector('tbody').id = testId
+        resultBody.querySelector('.collapsible').dataset.id = id
+
+        resultsTableRow.forEach((html) => {
+            const t = document.createElement('template')
+            t.innerHTML = html
+            resultBody.querySelector('.collapsible').appendChild(t.content)
+        })
+
+        if (log) {
+            // Wrap lines starting with "E" with span.error to color those lines red
+            const wrappedLog = log.replace(/^E.*$/gm, (match) => `<span class="error">${match}</span>`)
+            resultBody.querySelector('.log').innerHTML = wrappedLog
+        } else {
+            resultBody.querySelector('.log').remove()
+        }
+
+        if (collapsed) {
+            resultBody.querySelector('.collapsible > .col-result')?.classList.add('collapsed')
+            resultBody.querySelector('.extras-row').classList.add('hidden')
+        } else {
+            resultBody.querySelector('.collapsible > .col-result')?.classList.remove('collapsed')
+        }
+
+        const media = []
+        extras?.forEach(({ name, format_type, content }) => {
+            if (['image', 'video'].includes(format_type)) {
+                media.push({ path: content, name, format_type })
+            }
+
+            if (format_type === 'html') {
+                resultBody.querySelector('.extraHTML').insertAdjacentHTML('beforeend', `<div>${content}</div>`)
+            }
+        })
+        mediaViewer.setup(resultBody, media)
+
+        // Add custom html from the pytest_html_results_table_html hook
+        tableHtml?.forEach((item) => {
+            resultBody.querySelector('td[class="extra"]').insertAdjacentHTML('beforeend', item)
+        })
+
+        return resultBody
+    },
+}
+
+module.exports = {
+    dom,
+    htmlToElements,
+    find,
+    findAll,
+}
+
+},{"./mediaviewer.js":6}],3:[function(require,module,exports){
+const { manager } = require('./datamanager.js')
+const { doSort } = require('./sort.js')
+const storageModule = require('./storage.js')
+
+const getFilteredSubSet = (filter) =>
+    manager.allData.tests.filter(({ result }) => filter.includes(result.toLowerCase()))
+
+const doInitFilter = () => {
+    const currentFilter = storageModule.getVisible()
+    const filteredSubset = getFilteredSubSet(currentFilter)
+    manager.setRender(filteredSubset)
+}
+
+const doFilter = (type, show) => {
+    if (show) {
+        storageModule.showCategory(type)
+    } else {
+        storageModule.hideCategory(type)
+    }
+
+    const currentFilter = storageModule.getVisible()
+    const filteredSubset = getFilteredSubSet(currentFilter)
+    manager.setRender(filteredSubset)
+
+    const sortColumn = storageModule.getSort()
+    doSort(sortColumn, true)
+}
+
+module.exports = {
+    doFilter,
+    doInitFilter,
+}
+
+},{"./datamanager.js":1,"./sort.js":7,"./storage.js":8}],4:[function(require,module,exports){
+const { redraw, bindEvents, renderStatic } = require('./main.js')
+const { doInitFilter } = require('./filter.js')
+const { doInitSort } = require('./sort.js')
+const { manager } = require('./datamanager.js')
+const data = JSON.parse(document.getElementById('data-container').dataset.jsonblob)
+
+function init() {
+    manager.setManager(data)
+    doInitFilter()
+    doInitSort()
+    renderStatic()
+    redraw()
+    bindEvents()
+}
+
+init()
+
+},{"./datamanager.js":1,"./filter.js":3,"./main.js":5,"./sort.js":7}],5:[function(require,module,exports){
+const { dom, find, findAll } = require('./dom.js')
+const { manager } = require('./datamanager.js')
+const { doSort } = require('./sort.js')
+const { doFilter } = require('./filter.js')
+const {
+    getVisible,
+    getCollapsedIds,
+    setCollapsedIds,
+    getSort,
+    getSortDirection,
+    possibleFilters,
+} = require('./storage.js')
+
+const removeChildren = (node) => {
+    while (node.firstChild) {
+        node.removeChild(node.firstChild)
+    }
+}
+
+const renderStatic = () => {
+    const renderEnvironmentTable = () => {
+        const environment = manager.environment
+        const rows = Object.keys(environment).map((key) => dom.getStaticRow(key, environment[key]))
+        const table = document.getElementById('environment')
+        removeChildren(table)
+        rows.forEach((row) => table.appendChild(row))
+    }
+    renderEnvironmentTable()
+}
+
+const addItemToggleListener = (elem) => {
+    elem.addEventListener('click', ({ target }) => {
+        const id = target.parentElement.dataset.id
+        manager.toggleCollapsedItem(id)
+
+        const collapsedIds = getCollapsedIds()
+        if (collapsedIds.includes(id)) {
+            const updated = collapsedIds.filter((item) => item !== id)
+            setCollapsedIds(updated)
+        } else {
+            collapsedIds.push(id)
+            setCollapsedIds(collapsedIds)
+        }
+        redraw()
+    })
+}
+
+const renderContent = (tests) => {
+    const sortAttr = getSort(manager.initialSort)
+    const sortAsc = JSON.parse(getSortDirection())
+    const rows = tests.map(dom.getResultTBody)
+    const table = document.getElementById('results-table')
+    const tableHeader = document.getElementById('results-table-head')
+
+    const newTable = document.createElement('table')
+    newTable.id = 'results-table'
+
+    // remove all sorting classes and set the relevant
+    findAll('.sortable', tableHeader).forEach((elem) => elem.classList.remove('asc', 'desc'))
+    tableHeader.querySelector(`.sortable[data-column-type="${sortAttr}"]`)?.classList.add(sortAsc ? 'desc' : 'asc')
+    newTable.appendChild(tableHeader)
+
+    if (!rows.length) {
+        const emptyTable = document.getElementById('template_results-table__body--empty').content.cloneNode(true)
+        newTable.appendChild(emptyTable)
+    } else {
+        rows.forEach((row) => {
+            if (!!row) {
+                findAll('.collapsible td:not(.col-links', row).forEach(addItemToggleListener)
+                find('.logexpander', row).addEventListener('click',
+                    (evt) => evt.target.parentNode.classList.toggle('expanded'),
+                )
+                newTable.appendChild(row)
+            }
+        })
+    }
+
+    table.replaceWith(newTable)
+}
+
+const renderDerived = () => {
+    const currentFilter = getVisible()
+    possibleFilters.forEach((result) => {
+        const input = document.querySelector(`input[data-test-result="${result}"]`)
+        input.checked = currentFilter.includes(result)
+    })
+}
+
+const bindEvents = () => {
+    const filterColumn = (evt) => {
+        const { target: element } = evt
+        const { testResult } = element.dataset
+
+        doFilter(testResult, element.checked)
+        const collapsedIds = getCollapsedIds()
+        const updated = manager.renderData.tests.map((test) => {
+            return {
+                ...test,
+                collapsed: collapsedIds.includes(test.id),
+            }
+        })
+        manager.setRender(updated)
+        redraw()
+    }
+
+    const header = document.getElementById('environment-header')
+    header.addEventListener('click', () => {
+        const table = document.getElementById('environment')
+        table.classList.toggle('hidden')
+        header.classList.toggle('collapsed')
+    })
+
+    findAll('input[name="filter_checkbox"]').forEach((elem) => {
+        elem.addEventListener('click', filterColumn)
+    })
+
+    findAll('.sortable').forEach((elem) => {
+        elem.addEventListener('click', (evt) => {
+            const { target: element } = evt
+            const { columnType } = element.dataset
+            doSort(columnType)
+            redraw()
+        })
+    })
+
+    document.getElementById('show_all_details').addEventListener('click', () => {
+        manager.allCollapsed = false
+        setCollapsedIds([])
+        redraw()
+    })
+    document.getElementById('hide_all_details').addEventListener('click', () => {
+        manager.allCollapsed = true
+        const allIds = manager.renderData.tests.map((test) => test.id)
+        setCollapsedIds(allIds)
+        redraw()
+    })
+}
+
+const redraw = () => {
+    const { testSubset } = manager
+
+    renderContent(testSubset)
+    renderDerived()
+}
+
+module.exports = {
+    redraw,
+    bindEvents,
+    renderStatic,
+}
+
+},{"./datamanager.js":1,"./dom.js":2,"./filter.js":3,"./sort.js":7,"./storage.js":8}],6:[function(require,module,exports){
+class MediaViewer {
+    constructor(assets) {
+        this.assets = assets
+        this.index = 0
+    }
+
+    nextActive() {
+        this.index = this.index === this.assets.length - 1 ? 0 : this.index + 1
+        return [this.activeFile, this.index]
+    }
+
+    prevActive() {
+        this.index = this.index === 0 ? this.assets.length - 1 : this.index -1
+        return [this.activeFile, this.index]
+    }
+
+    get currentIndex() {
+        return this.index
+    }
+
+    get activeFile() {
+        return this.assets[this.index]
+    }
+}
+
+
+const setup = (resultBody, assets) => {
+    if (!assets.length) {
+        resultBody.querySelector('.media').classList.add('hidden')
+        return
+    }
+
+    const mediaViewer = new MediaViewer(assets)
+    const container = resultBody.querySelector('.media-container')
+    const leftArrow = resultBody.querySelector('.media-container__nav--left')
+    const rightArrow = resultBody.querySelector('.media-container__nav--right')
+    const mediaName = resultBody.querySelector('.media__name')
+    const counter = resultBody.querySelector('.media__counter')
+    const imageEl = resultBody.querySelector('img')
+    const sourceEl = resultBody.querySelector('source')
+    const videoEl = resultBody.querySelector('video')
+
+    const setImg = (media, index) => {
+        if (media?.format_type === 'image') {
+            imageEl.src = media.path
+
+            imageEl.classList.remove('hidden')
+            videoEl.classList.add('hidden')
+        } else if (media?.format_type === 'video') {
+            sourceEl.src = media.path
+
+            videoEl.classList.remove('hidden')
+            imageEl.classList.add('hidden')
+        }
+
+        mediaName.innerText = media?.name
+        counter.innerText = `${index + 1} / ${assets.length}`
+    }
+    setImg(mediaViewer.activeFile, mediaViewer.currentIndex)
+
+    const moveLeft = () => {
+        const [media, index] = mediaViewer.prevActive()
+        setImg(media, index)
+    }
+    const doRight = () => {
+        const [media, index] = mediaViewer.nextActive()
+        setImg(media, index)
+    }
+    const openImg = () => {
+        window.open(mediaViewer.activeFile.path, '_blank')
+    }
+    if (assets.length === 1) {
+        container.classList.add('media-container--fullscreen')
+    } else {
+        leftArrow.addEventListener('click', moveLeft)
+        rightArrow.addEventListener('click', doRight)
+    }
+    imageEl.addEventListener('click', openImg)
+}
+
+module.exports = {
+    setup,
+}
+
+},{}],7:[function(require,module,exports){
+const { manager } = require('./datamanager.js')
+const storageModule = require('./storage.js')
+
+const genericSort = (list, key, ascending, customOrder) => {
+    let sorted
+    if (customOrder) {
+        sorted = list.sort((a, b) => {
+            const aValue = a.result.toLowerCase()
+            const bValue = b.result.toLowerCase()
+
+            const aIndex = customOrder.findIndex((item) => item.toLowerCase() === aValue)
+            const bIndex = customOrder.findIndex((item) => item.toLowerCase() === bValue)
+
+            // Compare the indices to determine the sort order
+            return aIndex - bIndex
+        })
+    } else {
+        sorted = list.sort((a, b) => a[key] === b[key] ? 0 : a[key] > b[key] ? 1 : -1)
+    }
+
+    if (ascending) {
+        sorted.reverse()
+    }
+    return sorted
+}
+
+const durationSort = (list, ascending) => {
+    const parseDuration = (duration) => {
+        if (duration.includes(':')) {
+            // If it's in the format "HH:mm:ss"
+            const [hours, minutes, seconds] = duration.split(':').map(Number)
+            return (hours * 3600 + minutes * 60 + seconds) * 1000
+        } else {
+            // If it's in the format "nnn ms"
+            return parseInt(duration)
+        }
+    }
+    const sorted = list.sort((a, b) => parseDuration(a['duration']) - parseDuration(b['duration']))
+    if (ascending) {
+        sorted.reverse()
+    }
+    return sorted
+}
+
+const doInitSort = () => {
+    const type = storageModule.getSort(manager.initialSort)
+    const ascending = storageModule.getSortDirection()
+    const list = manager.testSubset
+    const initialOrder = ['Error', 'Failed', 'Rerun', 'XFailed', 'XPassed', 'Skipped', 'Passed']
+
+    storageModule.setSort(type)
+    storageModule.setSortDirection(ascending)
+
+    if (type?.toLowerCase() === 'original') {
+        manager.setRender(list)
+    } else {
+        let sortedList
+        switch (type) {
+        case 'duration':
+            sortedList = durationSort(list, ascending)
+            break
+        case 'result':
+            sortedList = genericSort(list, type, ascending, initialOrder)
+            break
+        default:
+            sortedList = genericSort(list, type, ascending)
+            break
+        }
+        manager.setRender(sortedList)
+    }
+}
+
+const doSort = (type, skipDirection) => {
+    const newSortType = storageModule.getSort(manager.initialSort) !== type
+    const currentAsc = storageModule.getSortDirection()
+    let ascending
+    if (skipDirection) {
+        ascending = currentAsc
+    } else {
+        ascending = newSortType ? false : !currentAsc
+    }
+    storageModule.setSort(type)
+    storageModule.setSortDirection(ascending)
+
+    const list = manager.testSubset
+    const sortedList = type === 'duration' ? durationSort(list, ascending) : genericSort(list, type, ascending)
+    manager.setRender(sortedList)
+}
+
+module.exports = {
+    doInitSort,
+    doSort,
+}
+
+},{"./datamanager.js":1,"./storage.js":8}],8:[function(require,module,exports){
+const possibleFilters = [
+    'passed',
+    'skipped',
+    'failed',
+    'error',
+    'xfailed',
+    'xpassed',
+    'rerun',
+]
+
+const getVisible = () => {
+    const url = new URL(window.location.href)
+    const settings = new URLSearchParams(url.search).get('visible')
+    const lower = (item) => {
+        const lowerItem = item.toLowerCase()
+        if (possibleFilters.includes(lowerItem)) {
+            return lowerItem
+        }
+        return null
+    }
+    return settings === null ?
+        possibleFilters :
+        [...new Set(settings?.split(',').map(lower).filter((item) => item))]
+}
+
+const hideCategory = (categoryToHide) => {
+    const url = new URL(window.location.href)
+    const visibleParams = new URLSearchParams(url.search).get('visible')
+    const currentVisible = visibleParams ? visibleParams.split(',') : [...possibleFilters]
+    const settings = [...new Set(currentVisible)].filter((f) => f !== categoryToHide).join(',')
+
+    url.searchParams.set('visible', settings)
+    window.history.pushState({}, null, unescape(url.href))
+}
+
+const showCategory = (categoryToShow) => {
+    if (typeof window === 'undefined') {
+        return
+    }
+    const url = new URL(window.location.href)
+    const currentVisible = new URLSearchParams(url.search).get('visible')?.split(',').filter(Boolean) ||
+        [...possibleFilters]
+    const settings = [...new Set([categoryToShow, ...currentVisible])]
+    const noFilter = possibleFilters.length === settings.length || !settings.length
+
+    noFilter ? url.searchParams.delete('visible') : url.searchParams.set('visible', settings.join(','))
+    window.history.pushState({}, null, unescape(url.href))
+}
+
+const getSort = (initialSort) => {
+    const url = new URL(window.location.href)
+    let sort = new URLSearchParams(url.search).get('sort')
+    if (!sort) {
+        sort = initialSort || 'result'
+    }
+    return sort
+}
+
+const setSort = (type) => {
+    const url = new URL(window.location.href)
+    url.searchParams.set('sort', type)
+    window.history.pushState({}, null, unescape(url.href))
+}
+
+const getCollapsedCategory = (renderCollapsed) => {
+    let categories
+    if (typeof window !== 'undefined') {
+        const url = new URL(window.location.href)
+        const collapsedItems = new URLSearchParams(url.search).get('collapsed')
+        switch (true) {
+        case !renderCollapsed && collapsedItems === null:
+            categories = ['passed']
+            break
+        case collapsedItems?.length === 0 || /^["']{2}$/.test(collapsedItems):
+            categories = []
+            break
+        case /^all$/.test(collapsedItems) || collapsedItems === null && /^all$/.test(renderCollapsed):
+            categories = [...possibleFilters]
+            break
+        default:
+            categories = collapsedItems?.split(',').map((item) => item.toLowerCase()) || renderCollapsed
+            break
+        }
+    } else {
+        categories = []
+    }
+    return categories
+}
+
+const getSortDirection = () => JSON.parse(sessionStorage.getItem('sortAsc')) || false
+const setSortDirection = (ascending) => sessionStorage.setItem('sortAsc', ascending)
+
+const getCollapsedIds = () => JSON.parse(sessionStorage.getItem('collapsedIds')) || []
+const setCollapsedIds = (list) => sessionStorage.setItem('collapsedIds', JSON.stringify(list))
+
+module.exports = {
+    getVisible,
+    hideCategory,
+    showCategory,
+    getCollapsedIds,
+    setCollapsedIds,
+    getSort,
+    setSort,
+    getSortDirection,
+    setSortDirection,
+    getCollapsedCategory,
+    possibleFilters,
+}
+
+},{}]},{},[4]);
+    </script>
+  </footer>
+  </body>
+</html>

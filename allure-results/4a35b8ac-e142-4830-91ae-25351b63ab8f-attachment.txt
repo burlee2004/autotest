@@ -1,0 +1,7 @@
+2026-04-06 20:23:26 | INFO  | automation_framework.tests | [TEST END] tests/api/test_api_client.py::test_api_client_get
+2026-04-06 20:23:26 | INFO  | automation_framework.tests | [TEST START] tests/api/test_api_client.py::test_api_client_post
+2026-04-06 20:23:26 | INFO  | automation_framework.api_client | [API REQUEST] POST https://fake-api.com/auth/login
+2026-04-06 20:23:26 | INFO  | automation_framework.api_client | [API REQUEST HEADERS] {'Content-Type': 'application/json'}
+2026-04-06 20:23:26 | INFO  | automation_framework.api_client | [API REQUEST JSON] {'username': 'admin', 'password': '123456'}
+2026-04-06 20:23:26 | INFO  | automation_framework.api_client | [API RESPONSE] status_code=200
+2026-04-06 20:23:26 | INFO  | automation_framework.api_client | [API RESPONSE BODY] {"message": "success"}
