@@ -10,8 +10,8 @@ from selenium.webdriver.support import expected_conditions as EC
 @allure.story("Login with invalid credentials")
 @allure.title("Kịch bản kiểm thử: Đăng nhập Facebook với tài khoản giả định")
 def test_facebook_login(driver, config):
-    # Lấy base_url từ fixture config, mặc định là https://www.facebook.com nếu không định nghĩa
-    base_url = config.get('base_url', 'https://www.facebook.com')
+    # Ép cứng URL Facebook để không bị lấy nhầm URL khách sạn
+    base_url = 'https://www.facebook.com'
     wait = WebDriverWait(driver, 10)
 
     with allure.step(f"Truy cập vào trang web: {base_url}"):
@@ -39,8 +39,7 @@ def test_facebook_login(driver, config):
         current_url = driver.current_url
         allure.attach(
             driver.get_screenshot_as_png(), 
-            name="Kết quả sau
- khi đăng nhập", 
+            name="Kết quả sau khi đăng nhập", 
             attachment_type=allure.attachment_type.PNG
         )
         # Kiểm tra xem có sự thay đổi URL hoặc giữ nguyên tại trang đăng nhập (do sai tài khoản)
