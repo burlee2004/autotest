@@ -57,7 +57,7 @@ class TestPalatinUI:
         time.sleep(2)
         assert "/room/" in driver.current_url
         # Scroll xuống để thấy thông tin phòng thay vì chỉ thấy banner
-        driver.execute_script("window.scrollBy(0, 500);")
+        driver.execute_script("window.scrollBy(0, 100);")
         time.sleep(1)
         # Chụp ảnh chi tiết phòng
         allure.attach(driver.get_screenshot_as_png(), name="Anh_Chi_Tiet_Phong", attachment_type=AttachmentType.PNG)
