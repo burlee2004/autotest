@@ -7046,3 +7046,23 @@ requests.exceptions.ConnectionError: HTTPConnectionPool(host='host.docker.intern
 2026-04-06 20:23:41 | INFO  | automation_framework.tests | [TEST START] tests/ui/test_login.py::test_dang_nhap_that_bai
 2026-04-06 20:23:41 | INFO  | automation_framework.driver_factory | Start browser: chrome | headless=True
 2026-04-06 20:23:45 | INFO  | automation_framework.tests | [TEST END] tests/ui/test_login.py::test_dang_nhap_that_bai
+2026-09-23 11:08:40 | INFO  | automation_framework.tests | [TEST START] tests/api/test_api_hotel.py::TestBackendAPI::test_api_admin_login
+2026-09-23 11:08:49 | INFO  | automation_framework.tests | [TEST END] tests/api/test_api_hotel.py::TestBackendAPI::test_api_admin_login
+2026-09-23 11:08:49 | INFO  | automation_framework.tests | [TEST START] tests/api/test_api_hotel.py::TestBackendAPI::test_api_security_admin_route
+2026-09-23 11:08:52 | INFO  | automation_framework.tests | [TEST END] tests/api/test_api_hotel.py::TestBackendAPI::test_api_security_admin_route
+2026-09-23 11:08:52 | INFO  | automation_framework.tests | [TEST START] tests/api/test_api_hotel.py::TestBackendAPI::test_api_book_room_success
+2026-09-23 11:08:54 | INFO  | automation_framework.tests | [TEST END] tests/api/test_api_hotel.py::TestBackendAPI::test_api_book_room_success
+2026-09-23 11:08:54 | INFO  | automation_framework.tests | [TEST START] tests/api/test_api_hotel.py::TestBackendAPI::test_api_book_room_fail_already_booked
+2026-09-23 11:08:57 | INFO  | automation_framework.tests | [TEST END] tests/api/test_api_hotel.py::TestBackendAPI::test_api_book_room_fail_already_booked
+2026-09-23 11:08:57 | INFO  | automation_framework.tests | [TEST START] tests/api/test_api_hotel.py::TestBackendAPI::test_api_book_room_fail_not_exist
+2026-09-23 11:08:59 | INFO  | automation_framework.tests | [TEST END] tests/api/test_api_hotel.py::TestBackendAPI::test_api_book_room_fail_not_exist
+2026-09-23 11:08:59 | INFO  | automation_framework.tests | [TEST START] tests/api/test_api_hotel.py::TestBackendAPI::test_api_admin_approve_booking
+2026-09-23 11:09:02 | INFO  | automation_framework.tests | [TEST END] tests/api/test_api_hotel.py::TestBackendAPI::test_api_admin_approve_booking
+2026-09-23 11:09:02 | INFO  | automation_framework.tests | [TEST START] tests/api/test_api_hotel.py::TestBackendAPI::test_api_admin_update_room_status
+2026-09-23 11:09:06 | INFO  | automation_framework.tests | [TEST END] tests/api/test_api_hotel.py::TestBackendAPI::test_api_admin_update_room_status
+2026-09-23 11:09:06 | INFO  | automation_framework.tests | [TEST START] tests/api/test_api_hotel.py::TestBackendAPI::test_api_admin_reset_room
+2026-09-23 11:09:08 | INFO  | automation_framework.tests | [TEST END] tests/api/test_api_hotel.py::TestBackendAPI::test_api_admin_reset_room
+2026-09-23 11:09:08 | INFO  | automation_framework.tests | [TEST START] tests/api/test_api_hotel.py::TestBackendAPI::test_api_admin_create_then_delete_user
+2026-09-23 11:17:53 | INFO  | automation_framework.tests | [TEST START] tests/saucedemo/test_saucedemo.py::TestSauceDemo::test_login_saucedemo
+2026-09-23 11:17:53 | INFO  | automation_framework.driver_factory | Start browser: chrome | headless=True
+2026-09-23 11:18:10 | INFO  | automation_framework.tests | [TEST END] tests/saucedemo/test_saucedemo.py::TestSauceDemo::test_login_saucedemo

@@ -24,7 +24,7 @@ pipeline {
                 // =========================================================================
                 sh 'venv/bin/pytest tests/ui/ tests/api/ 
                     --alluredir=reports/allure-results 
-                    --clean-alluredir'
+                    --clean-alluredir' 
   
                 // =========================================================================
                 // 🔵 KỊCH BẢN 2: CHỈ TEST GOOGLE SEARCH
