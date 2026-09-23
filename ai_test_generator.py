@@ -69,10 +69,10 @@ if __name__ == "__main__":
         if code_result:
             # Tạo tên file tự động dựa vào timestamp
             file_name = f"test_ai_generated_{int(time.time())}.py"
-            file_path = os.path.join("tests", "ui", file_name)
+            file_path = os.path.join("tests", "ai_generated", file_name)
             
             # Đảm bảo thư mục tồn tại
-            os.makedirs(os.path.join("tests", "ui"), exist_ok=True)
+            os.makedirs(os.path.join("tests", "ai_generated"), exist_ok=True)
             
             # Lưu code vào file
             with open(file_path, "w", encoding="utf-8") as f:
