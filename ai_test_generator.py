@@ -13,7 +13,7 @@ genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-3.5-flash')
 
 def generate_test_script(scenario_description):
-    print(f"\n[AI] Đang suy nghĩ và viết code cho kịch bản: '{scenario_description}'...")
+    print(f"\n[AI] Dang suy nghi va viet code cho kich ban: '{scenario_description}'...")
     
     prompt = f"""
     Bạn là một kỹ sư kiểm thử tự động (QA Automation Engineer) chuyên nghiệp.
@@ -46,7 +46,7 @@ def generate_test_script(scenario_description):
             
         return code.strip()
     except Exception as e:
-        print(f"[LỖI] Không thể kết nối với Gemini API: {e}")
+        print(f"[LOI] Khong the ket noi voi Gemini API: {e}")
         return None
 
 if __name__ == "__main__":
@@ -58,9 +58,9 @@ if __name__ == "__main__":
     # Nếu chạy qua Jenkins (truyền tham số)
     if len(sys.argv) > 1:
         scenario = sys.argv[1]
-        print(f"Kịch bản nhận từ Jenkins: {scenario}")
+        print(f"Kich ban nhan tu Jenkins: {scenario}")
     else:
-        scenario = input("\nNhập kịch bản bạn muốn AI viết (Ví dụ: Đăng nhập sai mật khẩu): ")
+        scenario = input("\nNhap kich ban ban muon AI viet: ")
 
     
     if scenario:
@@ -78,5 +78,5 @@ if __name__ == "__main__":
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(code_result)
                 
-            print(f"\n✅ [THÀNH CÔNG] AI đã viết xong code và lưu vào file: {file_path}")
-            print("Bạn có thể mở file đó ra để xem hoặc chạy ngay bằng lệnh: pytest " + file_path)
+            print(f"\n[THANH CONG] AI da viet xong code va luu vao file: {file_path}")
+            print("Ban co the mo file do ra de xem hoac chay ngay bang lenh: pytest " + file_path)
