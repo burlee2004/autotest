@@ -56,6 +56,9 @@ class TestPalatinUI:
         driver.execute_script("arguments[0].click();", btn_details[0])
         time.sleep(2)
         assert "/room/" in driver.current_url
+        # Scroll xuống để thấy thông tin phòng thay vì chỉ thấy banner
+        driver.execute_script("window.scrollBy(0, 500);")
+        time.sleep(1)
         # Chụp ảnh chi tiết phòng
         allure.attach(driver.get_screenshot_as_png(), name="Anh_Chi_Tiet_Phong", attachment_type=AttachmentType.PNG)
 
@@ -145,6 +148,8 @@ class TestPalatinUI:
             driver.execute_script("document.getElementById('detailCheckOut').value = '2026-10-15';")
             
             with allure.step("Chụp ảnh Form Đặt Phòng đã điền đầy đủ (Trước khi bấm Submit)"):
+                driver.execute_script("window.scrollBy(0, 600);")
+                time.sleep(1)
                 allure.attach(driver.get_screenshot_as_png(), name="Anh_Form_Day_Du_Data", attachment_type=AttachmentType.PNG)
             
             submit_btn = driver.find_element(By.CSS_SELECTOR, "button[onclick='submitDetailBooking()']")
@@ -158,6 +163,8 @@ class TestPalatinUI:
             
             # Sau khi Alert đóng rồi, ta mới chụp ảnh màn hình sau khi đặt xong
             with allure.step("Chụp ảnh giao diện sau khi đã đặt phòng thành công"):
+                driver.execute_script("window.scrollBy(0, 600);")
+                time.sleep(1)
                 allure.attach(driver.get_screenshot_as_png(), name="Anh_Giao_Dien_Sau_Khi_Dat", attachment_type=AttachmentType.PNG)
 
     # ================= NHÓM 2: QUẢN TRỊ VIÊN (ADMIN) =================
@@ -185,10 +192,14 @@ class TestPalatinUI:
         driver.find_element(By.NAME, "capacity_adults").send_keys("2")
         driver.find_element(By.NAME, "capacity_children").send_keys("1")
         
+        import urllib.request
         fd, temp_img_path = tempfile.mkstemp(suffix=".jpg")
-        with open(temp_img_path, 'wb') as f:
-            f.write(b'\xFF\xD8\xFF\xE0\x00\x10\x4A\x46\x49\x46\x00\x01')
         os.close(fd)
+        try:
+            urllib.request.urlretrieve("https://picsum.photos/800/600", temp_img_path)
+        except Exception:
+            with open(temp_img_path, 'wb') as f:
+                f.write(b'\xFF\xD8\xFF\xE0\x00\x10\x4A\x46\x49\x46\x00\x01')
         
         driver.find_element(By.NAME, "image").send_keys(temp_img_path)
             
