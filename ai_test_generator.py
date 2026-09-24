@@ -21,7 +21,7 @@ def generate_test_script(scenario_description):
     
     Các hàm hỗ trợ đã có sẵn:
     - fixture `driver` (trả về đối tượng Selenium WebDriver).
-    - fixture `config` (trả về dictionary chứa cấu hình, url gốc là `config['base_url']`).
+    - KHÔNG DÙNG fixture config để lấy URL. Phải sử dụng ĐÚNG địa chỉ URL được yêu cầu trong kịch bản.
     
     Yêu cầu:
     Hãy viết một file code hoàn chỉnh (.py) chứa kịch bản kiểm thử cho tình huống sau:
