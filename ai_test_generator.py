@@ -10,7 +10,7 @@ API_KEY = os.environ.get("GEMINI_API_KEY")
 genai.configure(api_key=API_KEY)
 
 # Sử dụng model Gemini thế hệ mới (Năm 2026)
-model = genai.GenerativeModel('gemini-3.5-flash')
+model = genai.GenerativeModel('gemini-3.5-flash-lite')
 
 def generate_test_script(scenario_description):
     print(f"\n[AI] Dang suy nghi va viet code cho kich ban: '{scenario_description}'...")
